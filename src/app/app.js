@@ -9,7 +9,7 @@ import { Navigation } from '../navigation/navigation.js';
 
 export class App {
     #username;
-    #currentDirectory = process.cwd();
+    #currentDirectory;
 
     #readline = new Readline();
     #os = new Os();
@@ -21,7 +21,8 @@ export class App {
     constructor() {
         this.commands = new Map([
             [ '.exit', () => this.#readline.stop() ],
-            [ 'up', () => this.#navigation.up(this.getCurrentDirectory.bind(this), this.updateCurrentDirectory.bind(this)) ],
+            [ 'up', async () => await this.#navigation.up() ],
+            [ 'cd', async (args) => await this.#navigation.cd(args) ],
             [ 'os', (args) => this.#os.handler(args) ],
             [ 'cat', async (args) => await this.#fs.printFile(args) ],
             [ 'add', async (args) => await this.#fs.runAddFile(args) ],
@@ -34,7 +35,7 @@ export class App {
             [ 'decompress', async (args) => await this.#zip.decompress(args) ]
         ]);
         this.#username = parseArgs() ? parseArgs() : 'Username';
-        this.#currentDirectory = process.cwd();
+        this.#currentDirectory = this.#navigation.getCwd();
     }
 
     init() {
@@ -47,10 +48,6 @@ export class App {
 
     getUsername() {
         return this.#username;
-    }
-
-    updateCurrentDirectory() {
-        this.#currentDirectory = process.cwd();
     }
 
     getCurrentDirectory() {
