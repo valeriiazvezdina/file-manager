@@ -1,6 +1,7 @@
 import os from 'node:os';
 import { OperationFailedError } from '../error/operationFailedError.js';
 import { resolve } from 'node:path';
+import { stat } from 'node:fs/promises';
 
 export class Navigation {
     #cwd;
@@ -20,14 +21,16 @@ export class Navigation {
     changeDirectory(dir) {
         return new Promise(async (res, rej) => {
             try {
-                const absolutePath = path.resolve(dir);
-                const folderExists = await fs.stat(absolutePath)
-                                                                .then(stat => stat.isDirectory())
-                                                                .catch(() => false);
-                if (folderExists) {
+                const absolutePath = resolve(this.getCwd(), dir);;
+
+                const stats = await stat(absolutePath);
+
+                if (stats.isDirectory()) {
                     this.setCwd(
-                        resolve(this.getCwd(), dir)
+                        resolve(absolutePath)
                     );
+                } else {
+                    throw new OperationFailedError();
                 }
                 console.log(`You are currently in ${this.getCwd()}`);
                 res();
