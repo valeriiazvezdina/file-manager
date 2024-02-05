@@ -23,6 +23,7 @@ export class App {
             [ '.exit', () => this.#readline.stop() ],
             [ 'up', async () => await this.#navigation.up() ],
             [ 'cd', async (args) => await this.#navigation.cd(args) ],
+            [ 'ls', async () => await this.#navigation.ls() ],
             [ 'os', (args) => this.#os.handler(args) ],
             [ 'cat', async (args) => await this.#fs.printFile(args) ],
             [ 'add', async (args) => await this.#fs.runAddFile(args) ],

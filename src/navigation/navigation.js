@@ -1,7 +1,7 @@
 import os from 'node:os';
 import { OperationFailedError } from '../error/operationFailedError.js';
 import { resolve } from 'node:path';
-import { stat } from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
 
 export class Navigation {
     #cwd;
@@ -55,5 +55,33 @@ export class Navigation {
         } catch(err) {
             console.log(err.message);
         }
+    }
+
+    async ls() {
+        const content = await readdir(this.#cwd, {
+            withFileTypes: true
+        });
+
+        console.log(content)
+
+        const files = content
+                            .map(item => ({
+                                Name: item.name,
+                                Type: item.isFile() ? 'file' : 'directory'
+                            }));
+
+                            console.log(files)
+
+        files.sort((a, b) => {
+            if ((a.Type === 'directory') && !(b.Type === 'directory')) {
+                return -1;
+              } else if (!(a.Type === 'directory') && (b.Type === 'directory')) {
+                return 1;
+              } else {
+                return a.Name.localeCompare(b.Name);
+              }
+        });
+
+        console.table(files);
     }
 }
