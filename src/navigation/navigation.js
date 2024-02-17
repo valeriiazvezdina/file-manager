@@ -62,15 +62,11 @@ export class Navigation {
             withFileTypes: true
         });
 
-        console.log(content)
-
         const files = content
                             .map(item => ({
                                 Name: item.name,
                                 Type: item.isFile() ? 'file' : 'directory'
                             }));
-
-                            console.log(files)
 
         files.sort((a, b) => {
             if ((a.Type === 'directory') && !(b.Type === 'directory')) {

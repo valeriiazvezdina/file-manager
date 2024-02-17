@@ -6,6 +6,7 @@ import { Fs } from '../fs/fs.js';
 import { Hash } from '../hash/hash.js';
 import { Zip } from '../zip/zip.js';
 import { Navigation } from '../navigation/navigation.js';
+import { Help } from '../help/help.js';
 
 export class App {
     #username;
@@ -17,6 +18,7 @@ export class App {
     #hash = new Hash();
     #zip = new Zip();
     #navigation = new Navigation();
+    #help = new Help();
 
     constructor() {
         this.commands = new Map([
@@ -33,7 +35,8 @@ export class App {
             [ 'rm', async (args) => await this.#fs.runDeleteFile(args) ],
             [ 'hash', async (args) => await this.#hash.printHash(args) ],
             [ 'compress', async (args) => await this.#zip.compress(args) ],
-            [ 'decompress', async (args) => await this.#zip.decompress(args) ]
+            [ 'decompress', async (args) => await this.#zip.decompress(args) ],
+            [ 'help', (args) => this.#help.printCommands(args) ]
         ]);
         this.#username = parseArgs() ? parseArgs() : 'Username';
         this.#currentDirectory = this.#navigation.getCwd();
